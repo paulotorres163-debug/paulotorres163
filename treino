@@ -1,0 +1,74 @@
+package model.treino;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+public abstract class Treino {
+
+    protected static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    protected static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("HH:mm");
+
+    // Contador global de treinos criados
+    private static int totalTreinos = 0;
+
+    private final int id;
+    private LocalDate data;
+    private LocalTime horaInicio;
+    private LocalTime horaFim;
+    private String local;
+    private String cidade;
+    private String estado;
+    private String piso;
+    private List<String> treinadores;
+    private String objetivo;
+
+    public Treino(LocalDate data, LocalTime horaInicio, LocalTime horaFim, String local,
+                  String cidade, String estado, String piso,
+                  List<String> treinadores, String objetivo) {
+        this.data = data;
+        this.horaInicio = horaInicio;
+        this.horaFim = horaFim;
+        this.local = local;
+        this.cidade = cidade;
+        this.estado = estado;
+        this.piso = piso;
+        this.treinadores = treinadores;
+        this.objetivo = objetivo;
+        this.id = ++totalTreinos;
+    }
+
+    public static int getTotalTreinos() {
+        return totalTreinos;
+    }
+
+    // Cada modalidade monta sua própria ficha
+    public abstract String gerarFichaTecnica();
+
+    // Cabeçalho comum reaproveitado pelas subclasses
+    protected String gerarCabecalho(String modalidade) {
+        long minutos = Duration.between(horaInicio, horaFim).toMinutes();
+        return "===== FICHA TÉCNICA - TREINO DE " + modalidade.toUpperCase() + " =====\n"
+                + "Treino nº: " + id + "\n"
+                + "Data: " + data.format(FORMATO_DATA) + "\n"
+                + "Horário: " + horaInicio.format(FORMATO_HORA) + " às " + horaFim.format(FORMATO_HORA)
+                + " (" + minutos / 60 + "h" + String.format("%02d", minutos % 60) + "min)\n"
+                + "Local: " + local + " - " + cidade + "/" + estado + "\n"
+                + "Piso: " + piso + "\n"
+                + "Treinadores: " + String.join(", ", treinadores) + "\n"
+                + "Objetivo: " + objetivo + "\n";
+    }
+
+    public int getId() { return id; }
+    public LocalDate getData() { return data; }
+    public void setData(LocalDate data) { this.data = data; }
+    public LocalTime getHoraInicio() { return horaInicio; }
+    public LocalTime getHoraFim() { return horaFim; }
+    public String getLocal() { return local; }
+    public String getCidade() { return cidade; }
+    public String getEstado() { return estado; }
+    public String getPiso() { return piso; }
+    public List<String> getTreinadores() { return treinadores; }
+    public String getObjetivo() { return objetivo; }
